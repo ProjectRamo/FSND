@@ -33,17 +33,17 @@ class Venue(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(127))
+    genres = db.Column(db.String(125))
+    address = db.Column(db.String(123))
     city = db.Column(db.String(121))
     state = db.Column(db.String(122))
-    address = db.Column(db.String(123))
     phone = db.Column(db.String(124))
-    genres = db.Column(db.String(125))
+    website = db.Column(db.String(500))
+    facebook_link = db.Column(db.String(126))
     seeking_talent = db.Column(db.Boolean)
     seeking_description =  db.Column(db.String(500))
-    website = db.Column(db.String(500))
     image_link = db.Column(db.String(500))
-    facebook_link = db.Column(db.String(126))
-
+    
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 class Artist(db.Model):

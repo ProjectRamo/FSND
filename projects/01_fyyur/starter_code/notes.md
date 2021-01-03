@@ -26,4 +26,15 @@ python3 dbcomms.py upgrade
 - Had to add a password to get the database to work
 - After database migrations, Artist and Venue were added
 
-Todo: read Json data in
+## Reading in the data
+
+This was painful. Originally tried to read it in as JSON.
+Used load_venues.sql to read load in the JSON.
+Problem: SQL Alchemy wanted it as Boolean but SQL wanted it passed as text and then cast.
+
+Tried to load in the CSV directly by converting JSON-> CSV.
+data_venues.csv is the csv and the SQL command was simply:
+  \copy "Venue" from helper_files/data_venues.csv with csv header;
+
+However this was not easy because it doesn't read the header for cues as to what the columns are. It was easier to read the columns in again and migrate them in the right order. This did require a drop table.
+

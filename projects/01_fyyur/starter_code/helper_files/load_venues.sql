@@ -3,7 +3,7 @@ with venue_json (doc) as (
     ('[{
     "id": 1,
     "name": "The Musical Hop",
-    "genres": ["Jazz", "Reggae", "Swing", "Classical", "Folk"],
+    "genres": "Jazz,Reggae,Swing,Classical,Folk",
     "address": "1015 Folsom Street",
     "city": "San Francisco",
     "state": "CA",
@@ -17,7 +17,7 @@ with venue_json (doc) as (
   {
     "id": 2,
     "name": "The Dueling Pianos Bar",
-    "genres": ["Classical", "R&B", "Hip-Hop"],
+    "genres": "Classical,R&B,Hip-Hop",
     "address": "335 Delancey Street",
     "city": "New York",
     "state": "NY",
@@ -25,12 +25,13 @@ with venue_json (doc) as (
     "website": "https://www.theduelingpianos.com",
     "facebook_link": "https://www.facebook.com/theduelingpianos",
     "seeking_talent": "False",
+    "seeking_description": "",
     "image_link": "https://images.unsplash.com/photo-1497032205916-ac775f0649ae?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80"
   },
   {
     "id": 3,
     "name": "Park Square Live Music & Coffee",
-    "genres": ["Rock n Roll", "Jazz", "Classical", "Folk"],
+    "genres": "Rock n Roll,Jazz,Classical,Folk",
     "address": "34 Whiskey Moore Ave",
     "city": "San Francisco",
     "state": "CA",
@@ -38,13 +39,12 @@ with venue_json (doc) as (
     "website": "https://www.parksquarelivemusicandcoffee.com",
     "facebook_link": "https://www.facebook.com/ParkSquareLiveMusicAndCoffee",
     "seeking_talent": "False",
+    "seeking_description": "",
     "image_link": "https://images.unsplash.com/photo-1485686531765-ba63b07845a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=747&q=80"
   }]'::json)
 )
 insert into "Venue" (id, name, genres, address, city, state, phone, website, facebook_link, seeking_talent, seeking_description, image_link)
 select p.*
 from venue_json l
-  cross join lateral json_populate_recordset(null::"Venue", doc) as p
-on conflict (id) do update 
-  set name = excluded.name;
+  cross join lateral json_populate_recordset(null::"Venue", doc) as p;
 

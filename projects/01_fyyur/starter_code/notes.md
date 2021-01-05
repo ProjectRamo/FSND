@@ -1,9 +1,14 @@
+
+## database notes
+
 Created a database called fyyurdb using the interface.
 Not sure if the migrations are powerful enough to completely create a new database.
 
 - Created helper_files folder with helper files
 
+
 password is postgrespass
+fyyurdb=# ALTER USER postgres PASSWORD 'postgrespass';
 
 Had to create the database manually but not the tables.
 
@@ -18,9 +23,12 @@ exit
 Ran all three migrate steps using the helper python file dbcomms.py (for database communications)
 (It has to be in the 01_fyyur folder to work so move it there before running)
 
-python3 dbcomms.py init
-python3 dbcomms.py migrate
-python3 dbcomms.py upgrade
+python3 dbcomms.py db init
+python3 dbcomms.py db migrate
+python3 dbcomms.py db upgrade
+
+and if you push and pull from git betweeen multiple computers, you will need:
+python3 dbcomms.py db stamp 
 
 - Since the Udacity code produces mixed case table names, you have to use "" in postgres
 - Had to add a password to get the database to work

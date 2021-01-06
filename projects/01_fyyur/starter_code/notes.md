@@ -46,3 +46,6 @@ data_venues.csv is the csv and the SQL command was simply:
 
 However this was not easy because it doesn't read the header for cues as to what the columns are. It was easier to read the columns in again and migrate them in the right order. This did require a drop table.
 
+\copy "Artist" from helper_files/artist_mod.csv with csv header;
+
+and finally the shows were added manually to try and link them up with each artist and venue

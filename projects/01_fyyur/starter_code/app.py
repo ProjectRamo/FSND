@@ -126,6 +126,8 @@ def venues():
       "num_upcoming_shows": 0,
     }]
   }]
+  db_data = Venue.query.all()
+  print(db_data)
   return render_template('pages/venues.html', areas=data);
 
 @app.route('/venues/search', methods=['POST'])

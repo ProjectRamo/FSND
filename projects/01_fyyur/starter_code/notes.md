@@ -49,3 +49,6 @@ However this was not easy because it doesn't read the header for cues as to what
 \copy "Artist" from helper_files/artist_mod.csv with csv header;
 
 and finally the shows were added manually to try and link them up with each artist and venue
+
+For loading in the shows, wrote up some PSQL by hand in load_shows.sql and copy and pasted them into psql as postgres
+

@@ -126,9 +126,34 @@ def venues():
       "num_upcoming_shows": 0,
     }]
   }]
-  db_data = Venue.query.all()
-  print(db_data)
-  return render_template('pages/venues.html', areas=data);
+  # Used mentor Satyajeet's pseudocode
+  db_list = []
+  db_dict = {}
+  cities = Venue.query.distinct(Venue.city, Venue.state).all()
+  for city in cities:
+    #print("city", city)
+    #print("city.city", city.city)
+    #print("city type", type(city))
+    #print("city.city type", type(city.city))
+    db_dict["city"] = city.city
+    db_dict["state"] = city.state
+    venues = Venue.query.filter_by(city=city.city, state=city.state)
+    ven_list = []
+    for venue in venues:
+      ven_dict = {}
+      ven_dict["id"] = venue.id
+      ven_dict["name"] = venue.name
+      show_count = 0
+      for show in venue.query.join('shows'):
+        show_count+=1
+      ven_dict["num_upcoming_shows"]=show_count
+      ven_list.append(ven_dict.copy())
+    db_dict["venues"] = ven_list
+    db_list.append(db_dict.copy()) # the pointer like behavior cost many hours!
+  #print("json", db_list)
+  db_json = json.dumps(db_list)
+  print('json', db_json)
+  return render_template('pages/venues.html', areas=db_json);
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():

@@ -268,23 +268,38 @@ def show_venue(venue_id):
   ven_dict['facebook_link']=venue.facebook_link
   ven_dict['seeking_talent']=venue.seeking_talent
   ven_dict['image_link']=venue.image_link
-  shows_list=[]
+  past_shows_list=[]
+  upcoming_shows_list=[]
+  past_shows_count = 0
+  upcoming_shows_count = 0
   for show in Show.query.filter_by(venue_id=venue_id): # using the venue_id passed to function, not venue.id extracted above
     show_dict = {}
-    past_shows_count = 0
-    upcoming_shows_count = 0
+    #print('these shows', show.id, show.start_time)
+    #print('now it is:', datetime.datetime.now())
+    #print('>', show.start_time>datetime.datetime.now())
+    #print('<', show.start_time<datetime.datetime.now())
     if show.start_time<datetime.datetime.now():
       past_shows_count+=1
+      show_dict={}
+      show_dict['id']=show.id
+      show_artist = Artist.query.get(show.artist_id)
+      show_dict['artist_name']=show_artist.name
+      show_dict['artist_image_link']=show_artist.image_link
+      show_dict['start_time']=show.start_time.str()
+      past_shows_list.append(show_dict.copy())
     if show.start_time>datetime.datetime.now():
       upcoming_shows_count+=1
       show_dict={}
       show_dict['id']=show.id
-      show_dict['artist_name']=show.artist_name
-      show_dict['artist_image_link']=show.artist_image_link
-      show_dict['start_time']=show.start_time
-      shows_list.append(show_dict.copy())
-  ven_dict['shows']=shows_list
-
+      show_artist = Artist.query.get(show.artist_id)
+      show_dict['artist_name']=show_artist.name
+      show_dict['artist_image_link']=show_artist.image_link
+      show_dict['start_time']=show.start_time.str()
+      upcoming_shows_list.append(show_dict.copy())
+  ven_dict['past_shows']=past_shows_list
+  ven_dict['upcoming_shows']=upcoming_shows_list
+  ven_dict['past_shows_count']=past_shows_count
+  ven_dict['upcoming_shows_count']=upcoming_shows_count
   #print("dbase", ven_dict)
   #data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
   #print("hard coded", data)

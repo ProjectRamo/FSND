@@ -12,6 +12,8 @@ import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
+import datetime
+
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
@@ -71,7 +73,7 @@ class Show(db.Model):
   __tablename__ = 'Show'
 
   id = db.Column(db.Integer, primary_key=True)
-  date_time = db.Column(db.DateTime, nullable=False)
+  start_time = db.Column(db.DateTime, nullable=False)
   venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'), nullable=False)
   artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'), nullable=False)
 
@@ -135,25 +137,27 @@ def venues():
     #print("city.city", city.city)
     #print("city type", type(city))
     #print("city.city type", type(city.city))
-    db_dict["city"] = city.city
-    db_dict["state"] = city.state
+    db_dict['city'] = city.city
+    db_dict['state'] = city.state
     venues = Venue.query.filter_by(city=city.city, state=city.state)
     ven_list = []
     for venue in venues:
       ven_dict = {}
-      ven_dict["id"] = venue.id
-      ven_dict["name"] = venue.name
+      ven_dict['id'] = venue.id
+      ven_dict['name'] = venue.name
       show_count = 0
       for show in venue.query.join('shows'):
         show_count+=1
-      ven_dict["num_upcoming_shows"]=show_count
+      ven_dict['num_upcoming_shows']=show_count
       ven_list.append(ven_dict.copy())
-    db_dict["venues"] = ven_list
+    db_dict['venues'] = ven_list
     db_list.append(db_dict.copy()) # the pointer like behavior cost many hours!
   #print("json", db_list)
-  db_json = json.dumps(db_list)
-  print('json', db_json)
-  return render_template('pages/venues.html', areas=db_json);
+  db_json = json.dumps(db_list) # this totally destroyed the output by making it double quotes which is standard json
+  #print('original', data)
+  #print('json', db_json)
+  data=db_list
+  return render_template('pages/venues.html', areas=data)
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
@@ -251,8 +255,40 @@ def show_venue(venue_id):
     "past_shows_count": 1,
     "upcoming_shows_count": 1,
   }
-  data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
-  return render_template('pages/show_venue.html', venue=data)
+  venue = Venue.query.get(venue_id)
+  ven_dict = {}
+  ven_dict['id']=venue.id
+  ven_dict['name']=venue.name
+  ven_dict['genres']=venue.genres
+  ven_dict['address']=venue.address
+  ven_dict['city']=venue.city
+  ven_dict['state']=venue.state
+  ven_dict['phone']=venue.phone
+  ven_dict['website']=venue.website
+  ven_dict['facebook_link']=venue.facebook_link
+  ven_dict['seeking_talent']=venue.seeking_talent
+  ven_dict['image_link']=venue.image_link
+  shows_list=[]
+  for show in Show.query.filter_by(venue_id=venue_id): # using the venue_id passed to function, not venue.id extracted above
+    show_dict = {}
+    past_shows_count = 0
+    upcoming_shows_count = 0
+    if show.start_time<datetime.datetime.now():
+      past_shows_count+=1
+    if show.start_time>datetime.datetime.now():
+      upcoming_shows_count+=1
+      show_dict={}
+      show_dict['id']=show.id
+      show_dict['artist_name']=show.artist_name
+      show_dict['artist_image_link']=show.artist_image_link
+      show_dict['start_time']=show.start_time
+      shows_list.append(show_dict.copy())
+  ven_dict['shows']=shows_list
+
+  #print("dbase", ven_dict)
+  #data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
+  #print("hard coded", data)
+  return render_template('pages/show_venue.html', venue=ven_dict)
 
 #  Create Venue
 #  ----------------------------------------------------------------

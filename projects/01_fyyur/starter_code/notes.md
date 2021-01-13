@@ -52,3 +52,7 @@ and finally the shows were added manually to try and link them up with each arti
 
 For loading in the shows, wrote up some PSQL by hand in load_shows.sql and copy and pasted them into psql as postgres
 
+## Small things that took a long time
+
+json generates double quotes but the front wanted single quotes.
+When you add a dict to a list, it doesn't make a copy so you add the last dict.

@@ -169,6 +169,22 @@ def search_venues():
   print(search_term)
   venues = Venue.query.filter(Venue.name.ilike('%' + search_term + '%')).all()
   print(venues)
+  resp_dict = {}
+  ven_count = 0
+  ven_list = []
+  for venue in venues:
+    ven_count +=1
+    ven_dict = {}
+    ven_dict['id'] = venue.id
+    ven_dict['name'] = venue.name
+    show_count = 0
+    for show in venue.query.join('shows'):
+      show_count+=1
+    ven_dict['num_upcoming_shows']=show_count
+    ven_list.append(ven_dict.copy())
+  resp_dict["count"] = ven_count
+  resp_dict["data"] = ven_list
+
   response={
     "count": 1,
     "data": [{
@@ -177,7 +193,7 @@ def search_venues():
       "num_upcoming_shows": 0,
     }]
   }
-  return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
+  return render_template('pages/search_venues.html', results=resp_dict, search_term=request.form.get('search_term', ''))
 
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):

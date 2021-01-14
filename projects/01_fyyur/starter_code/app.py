@@ -285,7 +285,7 @@ def show_venue(venue_id):
       show_artist = Artist.query.get(show.artist_id)
       show_dict['artist_name']=show_artist.name
       show_dict['artist_image_link']=show_artist.image_link
-      show_dict['start_time']=show.start_time.str()
+      show_dict['start_time']=show.start_time.strftime("%A %d. %B %Y")
       past_shows_list.append(show_dict.copy())
     if show.start_time>datetime.datetime.now():
       upcoming_shows_count+=1
@@ -294,7 +294,7 @@ def show_venue(venue_id):
       show_artist = Artist.query.get(show.artist_id)
       show_dict['artist_name']=show_artist.name
       show_dict['artist_image_link']=show_artist.image_link
-      show_dict['start_time']=show.start_time.str()
+      show_dict['start_time']=show.start_time.strftime("%A %d. %B %Y")
       upcoming_shows_list.append(show_dict.copy())
   ven_dict['past_shows']=past_shows_list
   ven_dict['upcoming_shows']=upcoming_shows_list

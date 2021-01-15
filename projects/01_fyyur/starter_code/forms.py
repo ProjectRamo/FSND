@@ -93,7 +93,7 @@ class VenueForm(Form):
         'website'
     )
 
-    seeking_talent = BooleanField(
+    seeking_talent = BooleanField( #had to import this from WTF forms to work
         'seeking_talent'
     )
     seeking_description = StringField(

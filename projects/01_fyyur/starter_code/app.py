@@ -35,7 +35,8 @@ class Venue(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(127))
-    genres = db.Column(db.String(125))
+    # genres = db.Column(db.String(125)) This seems wrong since it sends all of them truncated
+    genres = db.Column(db.ARRAY(db.String))
     address = db.Column(db.String(123))
     city = db.Column(db.String(121))
     state = db.Column(db.String(122))
@@ -54,7 +55,8 @@ class Artist(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
-    genres = db.Column(db.String(120))
+    # genres = db.Column(db.String(120))
+    genres = db.Column(db.ARRAY(db.String))
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
     phone = db.Column(db.String(120))

@@ -405,7 +405,14 @@ def artists():
     "id": 6,
     "name": "The Wild Sax Band",
   }]
-  return render_template('pages/artists.html', artists=data)
+  artists = Artist.query.all()
+  art_list=[]
+  for artist in artists:
+    art_dict = {}
+    art_dict['id']=artist.id
+    art_dict['name']=artist.name
+    art_list.append(art_dict.copy())
+  return render_template('pages/artists.html', artists=art_list)
 
 @app.route('/artists/search', methods=['POST'])
 def search_artists():

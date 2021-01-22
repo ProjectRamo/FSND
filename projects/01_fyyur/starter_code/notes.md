@@ -56,3 +56,6 @@ For loading in the shows, wrote up some PSQL by hand in load_shows.sql and copy 
 
 json generates double quotes but the front wanted single quotes.
 When you add a dict to a list, it doesn't make a copy so you add the last dict.
+open up database and migrate multiple times, sometime from scratch, so automate uploading data
+repeat many dicts -> lists and send off
+use git

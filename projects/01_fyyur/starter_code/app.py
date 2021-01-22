@@ -504,8 +504,45 @@ def show_artist(artist_id):
     "past_shows_count": 0,
     "upcoming_shows_count": 3,
   }
-  data = list(filter(lambda d: d['id'] == artist_id, [data1, data2, data3]))[0]
-  return render_template('pages/show_artist.html', artist=data)
+  artist = Artist.query.get(artist_id)
+  art_dict = {}
+  art_dict['id']=artist.id
+  art_dict['name']=artist.name
+  art_dict['genres']=artist.genres
+  art_dict['city']=artist.city
+  art_dict['state']=artist.state
+  art_dict['phone']=artist.phone
+  art_dict['seeking_venue']=artist.seeking_venue
+  art_dict['image_link']=artist.image_link
+  past_shows_list=[]
+  upcoming_shows_list=[]
+  past_shows_count = 0
+  upcoming_shows_count = 0
+  for show in Show.query.filter_by(artist_id=artist.id):
+    show_dict = {}
+    #print('these shows', show.id, show.start_time)
+    #print('now it is:', datetime.datetime.now())
+    #print('>', show.start_time>datetime.datetime.now())
+    #print('<', show.start_time<datetime.datetime.now())
+    show_dict['id']=show.id
+    venue_show = Venue.query.get(show.venue_id)
+    show_dict['venue_id']=venue_show.id
+    show_dict['venue_name']=venue_show.name
+    show_dict['venue_image_line']=venue_show.image_link
+    show_dict['start_time']=show.start_time.strftime("%A %d. %B %Y")
+    if show.start_time<datetime.datetime.now():
+      past_shows_count+=1
+      past_shows_list.append(show_dict.copy())
+    if show.start_time>datetime.datetime.now():
+      upcoming_shows_count+=1
+      upcoming_shows_list.append(show_dict.copy())
+  art_dict['past_shows']=past_shows_list
+  art_dict['upcoming_shows']=upcoming_shows_list
+  art_dict['past_shows_count']=past_shows_count
+  art_dict['upcoming_shows_count']=upcoming_shows_count
+
+  #data = list(filter(lambda d: d['id'] == artist_id, [data1, data2, data3]))[0]
+  return render_template('pages/show_artist.html', artist=art_dict)
 
 #  Update
 #  ----------------------------------------------------------------
@@ -526,7 +563,20 @@ def edit_artist(artist_id):
     "image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80"
   }
   # TODO: populate form with fields from artist with ID <artist_id>
-  return render_template('forms/edit_artist.html', form=form, artist=artist)
+  artist = Artist.query.get(artist_id)
+  art_dict = {}
+  art_dict['id']=artist.id
+  art_dict['name']=artist.name
+  art_dict['genres']=artist.genres
+  art_dict['city']=artist.city
+  art_dict['state']=artist.state
+  art_dict['phone']=artist.phone
+  art_dict['website']=artist.website
+  art_dict['facebook_link']=artist.facebook_link
+  art_dict['seeking_venue']=artist.seeking_venue
+  art_dict['seeking_description']=artist.seeking_description
+  art_dict['image_link']=artist.image_link
+  return render_template('forms/edit_artist.html', form=form, artist=art_dict)
 
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
@@ -626,7 +676,20 @@ def shows():
     "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
     "start_time": "2035-04-15T20:00:00.000Z"
   }]
-  return render_template('pages/shows.html', shows=data)
+  shows=Show.query.all()
+  show_list = []
+  for show in shows:
+    show_dict={}
+    venue=Venue.query.get(show.venue_id)
+    show_dict['venue_id']=venue.id
+    show_dict["venue_name"]=venue.name
+    artist = Artist.query.get(show.artist_id)
+    show_dict['artist_id']=artist.id
+    show_dict['artist_name']=artist.name
+    show_dict['artist_image_link']=artist.image_link
+    show_dict['start_time']=show.start_time.strftime("%A %d. %B %Y")
+    show_list.append(show_dict.copy())
+  return render_template('pages/shows.html', shows=show_list)
 
 @app.route('/shows/create')
 def create_shows():

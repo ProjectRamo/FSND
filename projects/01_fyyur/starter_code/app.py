@@ -624,12 +624,39 @@ def create_artist_submission():
   # called upon submitting the new artist listing form
   # TODO: insert form data as a new Venue record in the db, instead
   # TODO: modify data to be the data object returned from db insertion
-
+  form = ArtistForm(request.form, meta={'csrf': False}) # I have seen references to this on the forum 
+  #form = VenueForm(request.form) # testing if I need csrf
+  if form.validate(): # This I missed if it was presented and am just using from Juliano
+      try:
+          artist = Artist(
+              name=form.name.data, # These do not refer to the name attribute which was emphasized
+              city=form.city.data, 
+              state=form.state.data,
+              phone=form.phone.data,
+              genres=form.genres.choices,
+              facebook_link=form.facebook_link.data,
+              image_link=form.image_link.data,
+              website=form.website.data,
+              seeking_venue=form.seeking_talent.data,
+              seeking_description=form.seeking_description.data
+          )
+          db.session.add(artist) # These were in the lesson
+          db.session.commit() # And this complets the database cycle per lesson
+          flash('Artist ' + form.name.data + ' was successfully listed!')
+      except ValueError as e: # Try Fail was also in the lesson, so this makes sense
+          print(e)
+          flash('An error occurred. Venue ' + form.name.data + ' could not be listed.')
+  else:
+      message = []
+      for f, e in form.errors.items():
+          message.append(f + ' ' + '|'.join(e))
+      flash('Errors ' + str(message))
+  return render_template('pages/home.html')
   # on successful db insert, flash success
-  flash('Artist ' + request.form['name'] + ' was successfully listed!')
+  # flash('Artist ' + request.form['name'] + ' was successfully listed!') Alternative variable to flash name
   # TODO: on unsuccessful db insert, flash an error instead.
   # e.g., flash('An error occurred. Artist ' + data.name + ' could not be listed.')
-  return render_template('pages/home.html')
+
 
 
 #  Shows
